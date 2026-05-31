@@ -1,0 +1,72 @@
+<div class="auth-page"
+     style="display:flex; align-items:flex-start; height:100vh; padding:40px;">
+
+  <!-- Welcome Message -->
+  <div class="welcome-text" style="max-width:800px; align-content: center; align-items: center; top: 40%;">
+    <h1>Welcome to Astraa Hotel</h1>
+    <p style="color: cornflowerblue;">
+      Access your reservations and manage your stay securely.
+    </p>
+  </div>
+
+  <!-- Login Card -->
+  <div class="auth-card " 
+       style=" right:50px; margin-left:auto; width:400px; padding:25px;  border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); ">
+
+    <!-- Logo & Title -->
+    <div style="text-align:center; margin-bottom:20px;">
+      <i class="bi bi-building" style="font-size:2.2rem; color:#ffffff;"></i>
+      <h2 style="margin-top:10px; color:#ffffff;">Welcome Back</h2>
+      <p style="color:#ffffff;">Sign in to continue your journey</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" 
+         style="background:#fee2e2; padding:10px; border-radius:5px; margin-bottom:15px;">
+      {{ error }}
+    </div>
+
+    <!-- Username -->
+    <div style="margin-bottom:15px;">
+      <label>Username</label>
+      <input [(ngModel)]="username"
+             placeholder="Enter username"
+             (keyup.enter)="login()"
+             style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;" />
+    </div>
+
+    <!-- Password -->
+    <div style="margin-bottom:15px;">
+      <label>Password</label>
+      <div style="display:flex; gap:5px;">
+        <input [(ngModel)]="password"
+               [type]="showPassword ? 'text' : 'password'"
+               placeholder="Enter password"
+               (keyup.enter)="login()"
+               style="flex:1; padding:10px; border:1px solid #ccc; border-radius:5px;" />
+
+        <button type="button"
+                (click)="showPassword = !showPassword"
+                style="padding:0 10px; border:1px solid #ccc; background:#f8f8f8;">
+          <i class="bi"
+             [class.bi-eye]="!showPassword"
+             [class.bi-eye-slash]="showPassword"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Login -->
+    <button (click)="login()"
+            [disabled]="loading"
+            style="width:100%; background:#2563eb; color:#fff; padding:10px; border:none; border-radius:5px;">
+      Login
+    </button>
+
+    <!-- Register -->
+    <div style="text-align:center; margin-top:15px;">
+      Don't have an account?
+      <a routerLink="/auth/register" style="color:#2563eb;">Register Now</a>
+    </div>
+
+  </div>
+</div>

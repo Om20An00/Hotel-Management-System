@@ -1,0 +1,100 @@
+<nav class="navbar navbar-expand-lg dashboard-navbar">
+  <div class="container">
+    <a class="navbar-brand text-white" routerLink="/customer/home">
+      <i class="bi bi-arrow-left me-2"></i>Astraa Hotel
+    </a>
+  </div>
+</nav>
+<div class="container py-4">
+  <h3 class="mb-4"><i class="bi bi-search me-2 text-primary"></i>Search Room Availability</h3>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-2">
+          <label class="form-label">Check-in *</label>
+          <input [(ngModel)]="search.checkIn" type="date" class="form-control" [class.is-invalid]="errors.checkIn" [min]="today">
+          <div class="invalid-feedback">{{errors.checkIn}}</div>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Check-out *</label>
+          <input [(ngModel)]="search.checkOut" type="date" class="form-control" [class.is-invalid]="errors.checkOut">
+          <div class="invalid-feedback">{{errors.checkOut}}</div>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Adults *</label>
+          <input [(ngModel)]="search.adults" type="number" class="form-control" [class.is-invalid]="errors.adults" min="1" max="10">
+          <div class="invalid-feedback">{{errors.adults}}</div>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Children</label>
+          <input [(ngModel)]="search.children" type="number" class="form-control" min="0" max="5">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Room Type *</label>
+          <select [(ngModel)]="search.roomType" class="form-select" [class.is-invalid]="errors.roomType">
+            <option value="">Select Type</option>
+            <option value="STANDARD">Standard</option>
+            <option value="DELUXE">Deluxe</option>
+            <option value="SUITE">Suite</option>
+            <option value="SUPREME">Supreme</option>
+          </select>
+          <div class="invalid-feedback">{{errors.roomType}}</div>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-primary w-100" (click)="doSearch()" [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+            <i *ngIf="!loading" class="bi bi-search me-1"></i>Search
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="serverError" class="alert alert-danger">{{serverError}}</div>
+
+  <div *ngIf="searched">
+    <div *ngIf="rooms.length > 0" class="d-flex gap-3 mb-3 align-items-center flex-wrap">
+      <div>
+        <label class="me-2">Sort:</label>
+        <select [(ngModel)]="sortBy" class="form-select d-inline-block w-auto" (change)="applyFilters()">
+          <option value="">Default</option>
+          <option value="priceAsc">Price: Low to High</option>
+          <option value="priceDesc">Price: High to Low</option>
+        </select>
+      </div>
+      <div class="ms-auto text-muted">{{filteredRooms.length}} room(s) found</div>
+    </div>
+
+    <div *ngIf="filteredRooms.length === 0" class="alert alert-info text-center py-5">
+      <i class="bi bi-calendar-x fs-1 text-muted d-block mb-2"></i>
+      No rooms available for the selected dates. Please try different dates.
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4" *ngFor="let room of filteredRooms">
+        <div class="card shadow-sm h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="badge bg-primary">{{room.roomType}}</span>
+            <span class="badge" [class.bg-success]="room.status==='AVAILABLE'" [class.bg-danger]="room.status!='AVAILABLE'">{{room.status}}</span>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Room {{room.roomNumber}}</h5>
+            <p class="fs-5 fw-bold text-primary">₹{{room.pricePerNight}} <small class="text-muted fw-normal fs-6">/ night</small></p>
+            <ul class="list-unstyled text-muted small">
+              <li><i class="bi bi-people me-2"></i>Max Occupancy: {{room.maxOccupancy}}</li>
+              <li><i class="bi bi-bed me-2"></i>Bed: {{room.bedType || 'N/A'}}</li>
+              <li *ngIf="room.roomSize"><i class="bi bi-arrows-angle-expand me-2"></i>Size: {{room.roomSize}} sq ft</li>
+              <li *ngIf="room.amenities?.length"><i class="bi bi-star me-2"></i>{{room.amenities?.join(', ')}}</li>
+            </ul>
+            <p *ngIf="room.description" class="text-muted small">{{room.description}}</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-success w-100" (click)="bookNow(room)" [disabled]="room.status!=='AVAILABLE'">
+              <i class="bi bi-calendar-plus me-2"></i>Book Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

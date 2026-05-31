@@ -1,0 +1,260 @@
+<!-- =========================
+   BOOKING MANAGEMENT CONTENT
+   ========================= -->
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <button
+  class="btn btn-outline-primary mb-3"
+  routerLink="/admin/dashboard">
+  <i class="bi bi-speedometer2 me-1"></i>
+  Dashboard
+</button>
+  <h3>
+    <i class="bi bi-calendar-check me-2 text-primary"></i>
+    Booking Management
+  </h3>
+
+  <button class="btn btn-primary"
+          (click)="showAdd=!showAdd; showEdit=false">
+    <i class="bi bi-plus-circle me-1"></i> New Booking
+  </button>
+</div>
+
+<!-- Alerts -->
+<div *ngIf="success" class="alert alert-success alert-dismissible">
+  <span>{{ success }}</span>
+  <button type="button"
+          class="btn-close"
+          (click)="success=''"></button>
+</div>
+
+<div *ngIf="error" class="alert alert-danger alert-dismissible">
+  <span>{{ error }}</span>
+  <button type="button"
+          class="btn-close"
+          (click)="error=''"></button>
+</div>
+
+<!-- ADD BOOKING -->
+<div class="card shadow-sm mb-3" *ngIf="showAdd">
+  <div class="card-header bg-primary text-white">
+    Create Reservation
+  </div>
+
+  <div class="card-body">
+    <div class="row g-3">
+
+      <div class="col-md-4">
+        <label class="form-label">Customer ID *</label>
+        <input [(ngModel)]="newBooking.customerId"
+               class="form-control"
+               placeholder="e.g. USR123456">
+
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Room ID *</label>
+        <input [(ngModel)]="newBooking.roomId"
+               type="number"
+               class="form-control">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Check-in *</label>
+        <input [(ngModel)]="newBooking.checkInDate"
+               type="date"
+               class="form-control"
+               [min]="today">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Check-out *</label>
+        <input [(ngModel)]="newBooking.checkOutDate"
+               type="date"
+               class="form-control">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Adults *</label>
+        <input [(ngModel)]="newBooking.numberOfAdults"
+               type="number"
+               class="form-control"
+               min="1">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Children</label>
+        <input [(ngModel)]="newBooking.numberOfChildren"
+               type="number"
+               class="form-control"
+               min="0">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Payment Method</label>
+        <select [(ngModel)]="newBooking.paymentMethod"
+                class="form-select">
+          <option value="">Select</option>
+          <option value="CASH">Cash</option>
+          <option value="CREDIT_CARD">Credit Card</option>
+          <option value="UPI">UPI</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="d-flex gap-2 mt-3">
+      <button class="btn btn-primary"
+              (click)="submitAdd()">
+        Create Booking
+      </button>
+      <button class="btn btn-outline-secondary"
+              (click)="showAdd=false">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT BOOKING -->
+<div class="card shadow-sm mb-3"
+     *ngIf="showEdit && editBooking">
+  <div class="card-header bg-warning">
+    Edit Booking {{ editBooking.bookingId }}
+  </div>
+
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Check-in</label>
+        <input [(ngModel)]="editBooking.checkInDate"
+               type="date"
+               class="form-control"
+               [min]="today">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Check-out</label>
+        <input [(ngModel)]="editBooking.checkOutDate"
+               type="date"
+               class="form-control">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Adults</label>
+        <input [(ngModel)]="editBooking.numberOfAdults"
+               type="number"
+               class="form-control"
+               min="1">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Children</label>
+        <input [(ngModel)]="editBooking.numberOfChildren"
+               type="number"
+               class="form-control"
+               min="0">
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-3">
+      <button class="btn btn-warning"
+              (click)="submitEdit()">
+        Update
+      </button>
+      <button class="btn btn-outline-secondary"
+              (click)="showEdit=false">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div class="input-group mb-3" style="max-width:400px">
+  <input [(ngModel)]="query"
+         class="form-control"
+         placeholder="Search by Booking ID or Guest Name..."
+         (keyup.enter)="search()">
+  <button class="btn btn-outline-secondary"
+          (click)="search()">
+    <i class="bi bi-search"></i>
+  </button>
+</div>
+
+<!-- TABLE -->
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary"></div>
+</div>
+
+<div class="table-responsive" *ngIf="!loading">
+  <table class="table table-hover table-bordered align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Booking ID</th>
+        <th>Customer</th>
+        <th>Room</th>
+        <th>Check-in</th>
+        <th>Check-out</th>
+        <th>Status</th>
+        <th>Amount</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let b of bookings">
+        <td class="small">{{ b.bookingId }}</td>
+        <td>{{ b.user?.customerName }}</td>
+        <td>{{ b.room?.roomNumber }}</td>
+        <td>{{ b.checkInDate }}</td>
+        <td>{{ b.checkOutDate }}</td>
+        <td>
+          <span class="badge"
+                [class.bg-success]="b.status==='CONFIRMED'"
+                [class.bg-info]="b.status==='CHECKED_IN'"
+                [class.bg-danger]="b.status==='CANCELLED'"
+                [class.bg-secondary]="b.status==='CHECKED_OUT'">
+            {{ b.status }}
+          </span>
+        </td>
+        <td>₹{{ b.totalAmount | number:'1.2-2' }}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-1"
+                  (click)="openEdit(b)"
+                  [disabled]="b.status==='CANCELLED'
+                               || b.status==='CHECKED_OUT'">
+            <i class="bi bi-pencil"></i>
+          </button>
+
+          <button class="btn btn-sm btn-danger"
+                  (click)="cancel(b.bookingId!)"
+                  [disabled]="b.status==='CANCELLED'
+                               || b.status==='CHECKED_IN'
+                               || b.status==='CHECKED_OUT'">
+            <i class="bi bi-x-circle"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PAGINATION -->
+<div class="d-flex justify-content-between mt-2"
+     *ngIf="totalPages > 1">
+  <button class="btn btn-outline-secondary btn-sm"
+          (click)="page=page-1; load()"
+          [disabled]="page===0">
+    Previous
+  </button>
+
+  <span>Page {{ page + 1 }} of {{ totalPages }}</span>
+
+  <button class="btn btn-outline-secondary btn-sm"
+          (click)="page=page+1; load()"
+          [disabled]="page >= totalPages - 1">
+    Next
+  </button>
+</div>
+``

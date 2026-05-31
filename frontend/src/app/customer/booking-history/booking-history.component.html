@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand-lg dashboard-navbar">
+  <div class="container"><a class="navbar-brand" routerLink="/customer/home"><i class="bi bi-arrow-left me-2"></i>My Bookings</a></div>
+</nav>
+<div class="container py-4">
+  <div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+
+  <h4 class="mb-3 text-primary"><i class="bi bi-calendar-check me-2"></i>Upcoming Bookings</h4>
+  <div *ngIf="upcoming.length === 0 && !loading" class="alert alert-info">No upcoming bookings found. Start your journey by booking a room!</div>
+  <div class="row g-3 mb-5">
+    <div class="col-12" *ngFor="let b of upcoming">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h6 class="mb-1">Booking ID: <strong>{{b.bookingId}}</strong></h6>
+              <div class="text-muted small">Room {{b.room?.roomNumber}} ({{b.room?.roomType}}) &bull; {{b.checkInDate}} → {{b.checkOutDate}}</div>
+              <div class="text-muted small">{{b.numberOfAdults}} Adults, {{b.numberOfChildren}} Children &bull; ₹{{b.totalAmount | number:'1.2-2'}}</div>
+            </div>
+            <div class="col-md-4 text-end mt-2 mt-md-0">
+              <span class="badge me-2" [class.bg-success]="b.status==='CONFIRMED'" [class.bg-warning]="b.status==='CHECKED_IN'" [class.bg-danger]="b.status==='CANCELLED'">{{b.status}}</span>
+              <span class="badge me-2" [class.bg-success]="b.paymentStatus==='PAID'" [class.bg-warning]="b.paymentStatus!='PAID'">{{b.paymentStatus}}</span>
+              <div class="mt-2 d-flex flex-wrap gap-1 justify-content-end">
+                <a [routerLink]="['/customer/booking-detail', b.bookingId]" class="btn btn-sm btn-outline-primary">Details</a>
+                <a [routerLink]="['/customer/update-booking', b.bookingId]" class="btn btn-sm btn-outline-secondary" *ngIf="b.status==='CONFIRMED'">Modify</a>
+                <button class="btn btn-sm btn-outline-danger" (click)="cancel(b.bookingId!)" *ngIf="b.status==='CONFIRMED'">Cancel</button>
+                <button class="btn btn-sm btn-outline-success" (click)="downloadInvoice(b.bookingId!)" *ngIf="b.paymentStatus==='PAID'"><i class="bi bi-download"></i> Invoice</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="mb-3 text-secondary"><i class="bi bi-clock-history me-2"></i>Past Bookings</h4>
+  <div *ngIf="past.length === 0 && !loading" class="alert alert-light">No past bookings found.</div>
+  <div class="row g-3">
+    <div class="col-12" *ngFor="let b of past">
+      <div class="card shadow-sm bg-light">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h6 class="mb-1">Booking ID: <strong>{{b.bookingId}}</strong></h6>
+              <div class="text-muted small">Room {{b.room?.roomNumber}} ({{b.room?.roomType}}) &bull; {{b.checkInDate}} → {{b.checkOutDate}}</div>
+              <div class="text-muted small">₹{{b.totalAmount | number:'1.2-2'}} &bull; <span class="badge bg-secondary">{{b.status}}</span></div>
+            </div>
+            <div class="col-md-4 text-end">
+              <button class="btn btn-sm btn-outline-success" (click)="downloadInvoice(b.bookingId!)" *ngIf="b.paymentStatus==='PAID'"><i class="bi bi-download me-1"></i>Invoice</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

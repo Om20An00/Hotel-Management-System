@@ -1,0 +1,237 @@
+<!-- =========================
+   BILL MANAGEMENT CONTENT
+   ========================= -->
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <button
+  class="btn btn-outline-primary mb-3"
+  routerLink="/admin/dashboard">
+  <i class="bi bi-speedometer2 me-1"></i>
+  Dashboard
+</button>
+  <h3>
+    <i class="bi bi-receipt me-2 text-primary"></i>
+    Bill Management
+  </h3>
+
+  <button class="btn btn-primary"
+          (click)="showAdd=!showAdd; showEdit=false">
+    <i class="bi bi-plus-circle me-1"></i> Add Bill
+  </button>
+</div>
+
+<!-- Alerts -->
+<div *ngIf="success" class="alert alert-success alert-dismissible">
+  <span>{{ success }}</span>
+  <button type="button"
+          class="btn-close"
+          (click)="success=''"></button>
+</div>
+
+<div *ngIf="error" class="alert alert-danger alert-dismissible">
+  <span>{{ error }}</span>
+  <button type="button"
+          class="btn-close"
+          (click)="error=''"></button>
+</div>
+
+<!-- ADD BILL -->
+<div class="card shadow-sm mb-3" *ngIf="showAdd">
+  <div class="card-header bg-primary text-white">
+    Add Bill
+  </div>
+
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Customer ID *</label>
+        <input [(ngModel)]="newBill.userId"
+               class="form-control"
+               placeholder="USR..." />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Room Charges</label>
+        <input [(ngModel)]="newBill.roomCharges"
+               type="number"
+               class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Service Charges</label>
+        <input [(ngModel)]="newBill.serviceCharges"
+               type="number"
+               class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Additional Fees</label>
+        <input [(ngModel)]="newBill.additionalFees"
+               type="number"
+               class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Tax Amount</label>
+        <input [(ngModel)]="newBill.taxAmount"
+               type="number"
+               class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Discount</label>
+        <input [(ngModel)]="newBill.discount"
+               type="number"
+               class="form-control" />
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-3">
+      <button class="btn btn-primary" (click)="submitAdd()">
+        Create Bill
+      </button>
+      <button class="btn btn-outline-secondary"
+              (click)="showAdd=false">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT BILL -->
+<div class="card shadow-sm mb-3"
+     *ngIf="showEdit && editBill">
+  <div class="card-header bg-warning">
+    Edit Bill {{ editBill.billId }}
+  </div>
+
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Room Charges</label>
+        <input [(ngModel)]="editBill.roomCharges"
+               type="number"
+               class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Service Charges</label>
+        <input [(ngModel)]="editBill.serviceCharges"
+               type="number"
+               class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Additional Fees</label>
+        <input [(ngModel)]="editBill.additionalFees"
+               type="number"
+               class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Tax</label>
+        <input [(ngModel)]="editBill.taxAmount"
+               type="number"
+               class="form-control" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Discount</label>
+        <input [(ngModel)]="editBill.discount"
+               type="number"
+               class="form-control" />
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-3">
+      <button class="btn btn-warning"
+              (click)="submitEdit()">
+        Update
+      </button>
+      <button class="btn btn-outline-secondary"
+              (click)="showEdit=false">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div class="input-group mb-3" style="max-width:400px">
+  <input [(ngModel)]="query"
+         class="form-control"
+         placeholder="Search bill ID or customer..."
+         (keyup.enter)="search()" />
+  <button class="btn btn-outline-secondary"
+          (click)="search()">
+    <i class="bi bi-search"></i>
+  </button>
+</div>
+
+<!-- TABLE -->
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary"></div>
+</div>
+
+<div class="table-responsive" *ngIf="!loading">
+  <table class="table table-hover table-bordered align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Bill ID</th>
+        <th>Customer</th>
+        <th>Room Charges</th>
+        <th>Tax</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let b of bills">
+        <td class="small">{{ b.billId }}</td>
+        <td>{{ b.user?.customerName }}</td>
+        <td>₹{{ b.roomCharges | number:'1.2-2' }}</td>
+        <td>₹{{ b.taxAmount | number:'1.2-2' }}</td>
+        <td>
+          <strong>₹{{ b.totalAmount | number:'1.2-2' }}</strong>
+        </td>
+        <td>
+          <span class="badge"
+                [class.bg-success]="b.paymentStatus==='PAID'"
+                [class.bg-warning]="b.paymentStatus!=='PAID'">
+            {{ b.paymentStatus }}
+          </span>
+        </td>
+        <td class="small">
+          {{ b.issuedAt | date:'dd/MM/yyyy' }}
+        </td>
+        <td>
+          <button class="btn btn-sm btn-warning"
+                  (click)="openEdit(b)">
+            <i class="bi bi-pencil"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PAGINATION -->
+<div class="d-flex justify-content-between mt-2"
+     *ngIf="totalPages > 1">
+  <button class="btn btn-outline-secondary btn-sm"
+          (click)="page=page-1; load()"
+          [disabled]="page===0">
+    Previous
+  </button>
+
+  <span>Page {{ page + 1 }} of {{ totalPages }}</span>
+
+  <button class="btn btn-outline-secondary btn-sm"
+          (click)="page=page+1; load()"
+          [disabled]="page >= totalPages - 1">
+    Next
+  </button>
+</div>

@@ -1,0 +1,58 @@
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container"><a class="navbar-brand" routerLink="/customer/home"><i class="bi bi-arrow-left me-2"></i>My Profile</a></div>
+</nav>
+<div class="container py-4" style="max-width:600px">
+  <h3 class="mb-4"><i class="bi bi-person-circle me-2 text-primary"></i>My Profile</h3>
+  <div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+  <div *ngIf="success" class="alert alert-success">{{success}}</div>
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+  <div *ngIf="!loading" class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <strong>Profile Details</strong>
+      <button class="btn btn-sm btn-outline-primary" (click)="editing=!editing">
+        <i class="bi" [class.bi-pencil]="!editing" [class.bi-x]="editing"></i> {{editing?'Cancel':'Edit'}}
+      </button>
+    </div>
+    <div class="card-body">
+      <div *ngIf="!editing">
+        <div class="row g-3">
+          <div class="col-12"><label class="text-muted small">User ID</label><div class="fw-bold">{{profile.userId}}</div></div>
+          <div class="col-12"><label class="text-muted small">Full Name</label><div>{{profile.customerName}}</div></div>
+          <div class="col-12"><label class="text-muted small">Email</label><div>{{profile.email}}</div></div>
+          <div class="col-12"><label class="text-muted small">Mobile</label><div>{{profile.countryCode}} {{profile.mobileNumber}}</div></div>
+          <div class="col-12"><label class="text-muted small">Address</label><div>{{profile.address || 'Not provided'}}</div></div>
+          <div class="col-12"><label class="text-muted small">Username</label><div>{{profile.username}}</div></div>
+        </div>
+      </div>
+      <div *ngIf="editing">
+        <div class="mb-3">
+          <label class="form-label">Full Name *</label>
+          <input [(ngModel)]="form.customerName" class="form-control" [class.is-invalid]="errors.customerName">
+          <div class="invalid-feedback">{{errors.customerName}}</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email *</label>
+          <input [(ngModel)]="form.email" class="form-control" [class.is-invalid]="errors.email">
+          <div class="invalid-feedback">{{errors.email}}</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Mobile Number *</label>
+          <div class="input-group">
+            <select [(ngModel)]="form.countryCode" class="form-select" style="max-width:100px">
+              <option>+91</option><option>+1</option><option>+44</option>
+            </select>
+            <input [(ngModel)]="form.mobileNumber" class="form-control" [class.is-invalid]="errors.mobileNumber">
+          </div>
+          <div class="text-danger small" *ngIf="errors.mobileNumber">{{errors.mobileNumber}}</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Address</label>
+          <textarea [(ngModel)]="form.address" class="form-control" rows="2"></textarea>
+        </div>
+        <button class="btn btn-primary" (click)="save()" [disabled]="saving">
+          <span *ngIf="saving" class="spinner-border spinner-border-sm me-1"></span>Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

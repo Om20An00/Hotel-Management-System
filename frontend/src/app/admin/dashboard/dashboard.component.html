@@ -1,0 +1,143 @@
+<!-- =========================
+     TOP NAVBAR
+     ========================= -->
+<nav class="navbar admin-navbar">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand text-white fw-semibold fs-5">
+      <i class="bi bi-building me-2"></i>Astraa Hotel Admin
+    </a>
+
+    <div class="ms-auto d-flex align-items-center gap-3">
+      <span class="text-white small">
+        Welcome, <strong>{{ adminName }}</strong>
+      </span>
+      <button
+        class="btn btn-outline-light btn-sm px-3"
+        (click)="logout()">
+        <i class="bi bi-box-arrow-right me-1"></i>Logout
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- =========================
+     LEFT SIDEBAR
+     ========================= -->
+<div class="admin-sidebar">
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link active" routerLink="/admin/dashboard">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/rooms">
+        <i class="bi bi-door-open"></i>
+        <span>Rooms</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/bookings">
+        <i class="bi bi-calendar-check"></i>
+        <span>Bookings</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/users">
+        <i class="bi bi-people"></i>
+        <span>Users</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/bills">
+        <i class="bi bi-receipt"></i>
+        <span>Bills</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/complaints">
+        <i class="bi bi-chat-square-dots"></i>
+        <span>Complaints</span>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<!-- =========================
+     MAIN CONTENT
+     ========================= -->
+<div class="admin-content">
+
+  <h4 class="fw-semibold mb-4">Dashboard Overview</h4>
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <!-- Stats -->
+  <div *ngIf="!loading" class="row g-4">
+    <div class="col-md-3" *ngFor="let s of dashboardStats">
+
+      <div class="dashboard-stat-card">
+        <i class="bi bi-{{ s.icon }} text-{{ s.color }}"></i>
+
+        <h5>
+          {{
+            s.valueKey === 'availableRooms'
+              ? availableRooms
+              : stats[s.valueKey] || 0
+          }}
+        </h5>
+
+        <small>{{ s.label }}</small>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="row g-4 mt-4">
+    <div class="col-md-4">
+      <a routerLink="/admin/rooms" class="dashboard-action-card">
+        <i class="bi bi-door-open text-primary"></i>
+        <strong>Manage Rooms</strong>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a routerLink="/admin/bookings" class="dashboard-action-card">
+        <i class="bi bi-calendar-check text-success"></i>
+        <strong>Manage Bookings</strong>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a routerLink="/admin/users" class="dashboard-action-card">
+        <i class="bi bi-people text-info"></i>
+        <strong>Manage Users</strong>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a routerLink="/admin/bills" class="dashboard-action-card">
+        <i class="bi bi-people text-info"></i>
+        <strong>Manage Bills</strong>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a routerLink="/admin/complaints" class="dashboard-action-card">
+        <i class="bi bi-people text-info"></i>
+        <strong>Manage Complaints</strong>
+      </a>
+    </div>
+  </div>
+
+</div>

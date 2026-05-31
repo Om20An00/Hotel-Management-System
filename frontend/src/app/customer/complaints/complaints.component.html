@@ -1,0 +1,91 @@
+<nav class="navbar navbar-expand-lg dashboard-navbar">
+  <div class="container"><a class="navbar-brand" routerLink="/customer/home"><i class="bi bi-arrow-left me-2"></i>Complaints</a></div>
+</nav>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-chat-square-text me-2 text-primary"></i>My Complaints</h3>
+    <button class="btn btn-primary" (click)="showForm=!showForm">
+      <i class="bi bi-plus-circle me-2"></i>Register Complaint
+    </button>
+  </div>
+
+  <div *ngIf="success" class="alert alert-success">{{success}}</div>
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+  <div *ngIf="showForm" class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">Register New Complaint</div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Category *</label>
+          <select [(ngModel)]="form.category" class="form-select" [class.is-invalid]="errors.category">
+            <option value="">Select Category</option>
+            <option value="ROOM_ISSUE">Room Issue</option>
+            <option value="SERVICE_ISSUE">Service Issue</option>
+            <option value="BILLING_ISSUE">Billing Issue</option>
+            <option value="OTHER">Other</option>
+          </select>
+          <div class="invalid-feedback">{{errors.category}}</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Booking ID</label>
+          <input [(ngModel)]="form.bookingId" class="form-control" placeholder="Optional">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Complaint Title * (10-100 chars)</label>
+          <input [(ngModel)]="form.title" class="form-control" [class.is-invalid]="errors.title" maxlength="100">
+          <div class="invalid-feedback">{{errors.title}}</div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description * (20-500 chars)</label>
+          <textarea [(ngModel)]="form.description" class="form-control" [class.is-invalid]="errors.description" rows="3" maxlength="500"></textarea>
+          <div class="invalid-feedback">{{errors.description}}</div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Contact Preference *</label><br>
+          <div class="form-check form-check-inline">
+            <input [(ngModel)]="form.contactPreference" class="form-check-input" type="radio" value="CALL" id="call">
+            <label class="form-check-label" for="call">Call</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input [(ngModel)]="form.contactPreference" class="form-check-input" type="radio" value="EMAIL" id="email">
+            <label class="form-check-label" for="email">Email</label>
+          </div>
+          <div class="text-danger small" *ngIf="errors.contactPreference">{{errors.contactPreference}}</div>
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-primary" (click)="submit()" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>Submit
+        </button>
+        <button class="btn btn-outline-secondary" (click)="reset()">Reset</button>
+        <button class="btn btn-outline-dark ms-auto" (click)="showForm=false">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="listLoading" class="text-center py-4"><div class="spinner-border text-primary"></div></div>
+  <div *ngIf="!listLoading && complaints.length===0" class="alert alert-info">You have not registered any complaints.</div>
+
+  <div class="row g-3">
+    <div class="col-12" *ngFor="let c of complaints">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <strong>{{c.complaintId}}</strong> &bull; <span class="badge" [ngClass]="statusClass(c.status!)">{{c.status}}</span>
+              <div class="text-muted small">{{c.category}} &bull; Submitted: {{c.submittedAt | date}}</div>
+              <div class="mt-1"><strong>{{c.title}}</strong></div>
+              <div class="text-muted small">{{c.description}}</div>
+              <div *ngIf="c.response" class="alert alert-light mt-2 mb-0 p-2 small"><strong>Response:</strong> {{c.response}}</div>
+            </div>
+            <div class="ms-3 d-flex flex-column gap-1">
+              <button *ngIf="c.status==='RESOLVED'" class="btn btn-sm btn-success" (click)="confirm(c.complaintId!)">Confirm Resolved</button>
+              <button *ngIf="c.status==='RESOLVED'" class="btn btn-sm btn-warning" (click)="reopen(c.complaintId!)">Reopen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

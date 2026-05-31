@@ -1,0 +1,63 @@
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container"><span class="navbar-brand"><i class="bi bi-credit-card me-2"></i>Payment</span></div>
+</nav>
+<div class="container py-4" style="max-width:600px">
+  <div *ngIf="paid" class="text-center">
+    <div class="card shadow p-5">
+      <i class="bi bi-check-circle-fill text-success display-3 mb-3"></i>
+      <h3>Payment Successful!</h3>
+      <p class="text-muted">Your booking is confirmed.</p>
+      <div class="alert alert-success text-start">
+        <div><strong>Booking ID:</strong> {{paidBooking?.bookingId}}</div>
+        <div><strong>Transaction ID:</strong> {{paidBooking?.transactionId}}</div>
+        <div><strong>Amount Paid:</strong> ₹{{paidBooking?.totalAmount | number:'1.2-2'}}</div>
+      </div>
+      <div class="d-flex gap-2 justify-content-center">
+        <button class="btn btn-success" (click)="downloadInvoice()"><i class="bi bi-download me-2"></i>Download Invoice</button>
+        <a routerLink="/customer/booking-history" class="btn btn-outline-primary">View Bookings</a>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!paid">
+    <h3 class="mb-4"><i class="bi bi-credit-card me-2 text-primary"></i>Enter Payment Details</h3>
+    <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+    <div *ngIf="booking" class="alert alert-info mb-3">
+      <strong>Amount to Pay: ₹{{booking?.totalAmount | number:'1.2-2'}}</strong>
+    </div>
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="form-label">Cardholder Name *</label>
+          <input [(ngModel)]="card.cardholderName" class="form-control" [class.is-invalid]="errors.cardholderName" placeholder="Name on card">
+          <div class="invalid-feedback">{{errors.cardholderName}}</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Card Number *</label>
+          <input [(ngModel)]="card.cardNumber" class="form-control" [class.is-invalid]="errors.cardNumber" placeholder="1234 5678 9012 3456" maxlength="16">
+          <div class="invalid-feedback">{{errors.cardNumber}}</div>
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <label class="form-label">Expiry (MM/YY) *</label>
+            <input [(ngModel)]="card.expiryDate" class="form-control" [class.is-invalid]="errors.expiryDate" placeholder="MM/YY">
+            <div class="invalid-feedback">{{errors.expiryDate}}</div>
+          </div>
+          <div class="col-6">
+            <label class="form-label">CVV *</label>
+            <input [(ngModel)]="card.cvv" class="form-control" [class.is-invalid]="errors.cvv" type="password" placeholder="•••" maxlength="4">
+            <div class="invalid-feedback">{{errors.cvv}}</div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Billing Address</label>
+          <input [(ngModel)]="card.billingAddress" class="form-control" placeholder="Optional">
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-success w-100 btn-lg mt-3" (click)="pay()" [disabled]="loading">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+      <i *ngIf="!loading" class="bi bi-shield-lock me-2"></i>Pay Now
+    </button>
+  </div>
+</div>

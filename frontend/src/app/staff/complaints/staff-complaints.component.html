@@ -1,0 +1,58 @@
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container"><a class="navbar-brand" routerLink="/staff/dashboard"><i class="bi bi-arrow-left me-2"></i>My Complaints</a></div>
+</nav>
+<div class="container py-4">
+  <h3 class="mb-4"><i class="bi bi-chat-square-dots me-2 text-primary"></i>Assigned Complaints</h3>
+  <div *ngIf="success" class="alert alert-success">{{success}}</div>
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+  <div class="card shadow-sm mb-4" *ngIf="selected">
+    <div class="card-header bg-warning">Manage: {{selected.complaintId}}</div>
+    <div class="card-body">
+      <p><strong>Customer:</strong> {{selected.user?.customerName}} &bull; <strong>Category:</strong> {{selected.category}}</p>
+      <p><strong>Description:</strong> {{selected.description}}</p>
+      <div *ngIf="selected.actionLog" class="alert alert-light small">{{selected.actionLog}}</div>
+      <div class="mb-2">
+        <label class="form-label">Status</label>
+        <select [(ngModel)]="statusUpdate" class="form-select">
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="RESOLVED">Resolved</option>
+          <option value="CLOSED">Closed</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Response to Customer</label>
+        <textarea [(ngModel)]="responseText" class="form-control" rows="2"></textarea>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Action Log Note</label>
+        <input [(ngModel)]="actionLog" class="form-control" placeholder="Steps taken...">
+      </div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary" (click)="update()">Update</button>
+        <button class="btn btn-outline-secondary" (click)="selected=null">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+  <div *ngIf="!loading && complaints.length===0" class="alert alert-info">No complaints assigned to you yet.</div>
+
+  <div class="row g-3">
+    <div class="col-12" *ngFor="let c of complaints">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <strong>{{c.complaintId}}</strong> &bull; <span class="badge" [ngClass]="statusClass(c.status!)">{{c.status}}</span>
+              <div class="text-muted small">{{c.category}} &bull; {{c.submittedAt | date}}</div>
+              <div><strong>{{c.title}}</strong></div>
+              <div class="text-muted small">{{c.description}}</div>
+            </div>
+            <button class="btn btn-sm btn-primary ms-3" (click)="select(c)"><i class="bi bi-gear"></i> Manage</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

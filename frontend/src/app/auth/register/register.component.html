@@ -1,0 +1,155 @@
+<!-- Split layout wrapper -->
+<div class="auth-split-page">
+
+  <!-- LEFT SIDE: Hotel / Resort background image -->
+  <div class="auth-image-panel">
+    <!-- Decorative only – no content here -->
+  </div>
+
+  <!--  Registration form -->
+  <div class="auth-form-panel">
+    <div class="auth-card" style="max-width:560px">
+
+      <!-- Header -->
+      <div class="auth-header text-center">
+        <i class="bi bi-person-plus fs-1 text-primary"></i>
+        <h2>Customer Registration</h2>
+      </div>
+
+      <!-- Server error -->
+      <div *ngIf="serverError" class="alert alert-danger">
+        {{ serverError }}
+      </div>
+
+      <!-- Form -->
+      <div class="row g-3">
+
+        <!-- Customer Name -->
+        <div class="col-12">
+          <label class="form-label">Customer Name *</label>
+          <input
+            [(ngModel)]="form.customerName"
+            class="form-control"
+            [class.is-invalid]="errors.customerName"
+            placeholder="Full Name" />
+          <div class="invalid-feedback">{{ errors.customerName }}</div>
+        </div>
+
+        <!-- Email -->
+        <div class="col-md-6">
+          <label class="form-label">Email *</label>
+          <input
+            type="email"
+            [(ngModel)]="form.email"
+            class="form-control"
+            [class.is-invalid]="errors.email"
+            placeholder="email@example.com" />
+          <div class="invalid-feedback">{{ errors.email }}</div>
+        </div>
+
+        <!-- Mobile -->
+        <div class="col-md-6">
+          <label class="form-label">Mobile Number *</label>
+          <div class="input-group">
+            <select
+              [(ngModel)]="form.countryCode"
+              class="form-select"
+              style="max-width:100px">
+              <option>+91</option>
+              <option>+1</option>
+              <option>+44</option>
+              <option>+61</option>
+            </select>
+            <input
+              type="tel"
+              [(ngModel)]="form.mobileNumber"
+              class="form-control"
+              [class.is-invalid]="errors.mobileNumber"
+              placeholder="9876543210" />
+          </div>
+          <div class="text-danger small" *ngIf="errors.mobileNumber">
+            {{ errors.mobileNumber }}
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="col-12">
+          <label class="form-label">Address *</label>
+          <textarea
+            [(ngModel)]="form.address"
+            class="form-control"
+            [class.is-invalid]="errors.address"
+            rows="2"
+            placeholder="Full Address"></textarea>
+          <div class="invalid-feedback">{{ errors.address }}</div>
+        </div>
+
+        <!-- Username -->
+        <div class="col-md-6">
+          <label class="form-label">Username *</label>
+          <input
+            [(ngModel)]="form.username"
+            class="form-control"
+            [class.is-invalid]="errors.username"
+            placeholder="Min 5 chars, no spaces" />
+          <div class="invalid-feedback">{{ errors.username }}</div>
+        </div>
+
+        <!-- Password -->
+        <div class="col-md-6">
+          <label class="form-label">Password *</label>
+          <input
+            type="password"
+            [(ngModel)]="form.password"
+            class="form-control"
+            [class.is-invalid]="errors.password"
+            placeholder="Min 8 chars" />
+          <div class="invalid-feedback">{{ errors.password }}</div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="col-12">
+          <label class="form-label">Confirm Password *</label>
+          <input
+            type="password"
+            [(ngModel)]="form.confirmPassword"
+            class="form-control"
+            [class.is-invalid]="errors.confirmPassword"
+            placeholder="Re-enter password" />
+          <div class="invalid-feedback">
+            {{ errors.confirmPassword }}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Buttons -->
+      <div class="d-flex gap-2 mt-4">
+        <button
+          class="btn btn-primary flex-fill"
+          (click)="register()"
+          [disabled]="loading">
+          <span
+            *ngIf="loading"
+            class="spinner-border spinner-border-sm me-1"></span>
+          Register
+        </button>
+
+        <button
+          class="btn btn-outline-secondary flex-fill"
+          (click)="reset()">
+          Reset
+        </button>
+      </div>
+
+      <!-- Login link -->
+      <div class="text-center mt-3">
+        <a routerLink="/auth/login" class="text-decoration-none">
+          Already registered? Login Now
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+</div>

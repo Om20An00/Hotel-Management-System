@@ -1,0 +1,172 @@
+<!-- =========================
+   ADMIN COMPLAINT MANAGEMENT
+   ========================= -->
+<button
+  class="btn btn-outline-primary mb-3"
+  routerLink="/admin/dashboard">
+  <i class="bi bi-speedometer2 me-1"></i>
+  Dashboard
+</button>
+<h3 class="mb-3">
+  <i class="bi bi-chat-square-dots me-2 text-primary"></i>
+  Complaint Management
+</h3>
+
+<!-- Alerts -->
+<div *ngIf="success" class="alert alert-success alert-dismissible">
+  <span>{{ success }}</span>
+  <button type="button" class="btn-close" (click)="success=''"></button>
+</div>
+
+<div *ngIf="error" class="alert alert-danger alert-dismissible">
+  <span>{{ error }}</span>
+  <button type="button" class="btn-close" (click)="error=''"></button>
+</div>
+
+<!-- SELECTED COMPLAINT -->
+<div class="row" *ngIf="selected">
+  <div class="col-md-5">
+    <div class="card shadow-sm mb-3">
+      <div class="card-header bg-warning">
+        Manage Complaint {{ selected.complaintId }}
+      </div>
+
+      <div class="card-body">
+        <p><strong>Customer:</strong> {{ selected.user?.customerName }}</p>
+        <p><strong>Category:</strong> {{ selected.category }}</p>
+        <p><strong>Title:</strong> {{ selected.title }}</p>
+        <p><strong>Description:</strong> {{ selected.description }}</p>
+        <p><strong>Contact:</strong> {{ selected.contactPreference }}</p>
+
+        <hr />
+
+        <!-- Assign Staff -->
+        <div class="mb-2">
+          <label class="form-label">Assign to Staff</label>
+          <div class="input-group">
+            <select [(ngModel)]="assignStaffId" class="form-select">
+              <option [value]="0">Select Staff</option>
+              <option *ngFor="let s of staffList" [value]="s.id">
+                {{ s.customerName }}
+              </option>
+            </select>
+            <button class="btn btn-outline-primary" (click)="assign()">
+              Assign
+            </button>
+          </div>
+        </div>
+
+        <!-- Update Status -->
+        <div class="mb-2">
+          <label class="form-label">Update Status</label>
+          <select [(ngModel)]="statusUpdate" class="form-select">
+            <option value="OPEN">Open</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="RESOLVED">Resolved</option>
+            <option value="CLOSED">Closed</option>
+          </select>
+        </div>
+
+        <!-- Response -->
+        <div class="mb-2">
+          <label class="form-label">Response to Customer</label>
+          <textarea [(ngModel)]="responseText"
+                    class="form-control"
+                    rows="2">
+          </textarea>
+        </div>
+
+        <!-- Action Log -->
+        <div class="mb-2">
+          <label class="form-label">Action Log</label>
+          <input [(ngModel)]="actionText"
+                 class="form-control"
+                 placeholder="Steps taken..." />
+        </div>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary" (click)="updateStatus()">
+            Update
+          </button>
+          <button class="btn btn-outline-secondary" (click)="selected=null">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div class="input-group mb-3" style="max-width:400px">
+  <input [(ngModel)]="query"
+         class="form-control"
+         placeholder="Search by complaint ID or customer..."
+         (keyup.enter)="search()" />
+  <button class="btn btn-outline-secondary" (click)="search()">
+    <i class="bi bi-search"></i>
+  </button>
+</div>
+
+<!-- LOADING -->
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary"></div>
+</div>
+
+<!-- TABLE -->
+<div class="table-responsive" *ngIf="!loading">
+  <table class="table table-hover table-bordered align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Complaint ID</th>
+        <th>Customer</th>
+        <th>Category</th>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Assigned To</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let c of complaints">
+        <td class="small">{{ c.complaintId }}</td>
+        <td>{{ c.user?.customerName }}</td>
+        <td>{{ c.category }}</td>
+        <td>{{ c.title }}</td>
+        <td>
+          <span class="badge" [ngClass]="statusClass(c.status!)">
+            {{ c.status }}
+          </span>
+        </td>
+        <td>{{ c.assignedStaff?.customerName || 'Unassigned' }}</td>
+        <td class="small">{{ c.submittedAt | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary"
+                  (click)="select(c)">
+            <i class="bi bi-gear"></i> Manage
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PAGINATION -->
+<div class="d-flex justify-content-between mt-2"
+     *ngIf="totalPages > 1">
+  <button class="btn btn-outline-secondary btn-sm"
+          (click)="page=page-1; load()"
+          [disabled]="page === 0">
+    Previous
+  </button>
+
+  <span>Page {{ page + 1 }} of {{ totalPages }}</span>
+
+  <button class="btn btn-outline-secondary btn-sm"
+          (click)="page=page+1; load()"
+          [disabled]="page >= totalPages - 1">
+    Next
+  </button>
+</div>

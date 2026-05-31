@@ -1,0 +1,53 @@
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container"><a class="navbar-brand" routerLink="/customer/search-rooms"><i class="bi bi-arrow-left me-2"></i>Back to Search</a></div>
+</nav>
+<div class="container py-4" style="max-width:700px">
+  <h3 class="mb-4"><i class="bi bi-calendar-plus me-2 text-primary"></i>Booking Confirmation</h3>
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+  <div *ngIf="room" class="card shadow-sm mb-3">
+    <div class="card-header bg-primary text-white"><i class="bi bi-building me-2"></i>Room Details</div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-6"><strong>Room:</strong> {{room.roomNumber}}</div>
+        <div class="col-6"><strong>Type:</strong> {{room.roomType}}</div>
+        <div class="col-6 mt-2"><strong>Check-in:</strong> {{search?.checkIn}}</div>
+        <div class="col-6 mt-2"><strong>Check-out:</strong> {{search?.checkOut}}</div>
+        <div class="col-6 mt-2"><strong>Nights:</strong> {{nights}}</div>
+        <div class="col-6 mt-2"><strong>Guests:</strong> {{search?.adults}} Adults, {{search?.children}} Children</div>
+      </div>
+    </div>
+  </div>
+  <div class="card shadow-sm mb-3">
+    <div class="card-header bg-light"><strong>Price Breakdown</strong></div>
+    <div class="card-body">
+      <div class="d-flex justify-content-between"><span>Base Price:</span><span>₹{{base | number:'1.2-2'}}</span></div>
+      <div class="d-flex justify-content-between"><span>GST (18%):</span><span>₹{{tax | number:'1.2-2'}}</span></div>
+      <hr>
+      <div class="d-flex justify-content-between fw-bold fs-5"><span>Total:</span><span class="text-primary">₹{{total | number:'1.2-2'}}</span></div>
+    </div>
+  </div>
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label">Payment Method *</label>
+        <select [(ngModel)]="paymentMethod" class="form-select" [class.is-invalid]="errors.paymentMethod">
+          <option value="">Select Payment Method</option>
+          <option value="CREDIT_CARD">Credit Card</option>
+          <option value="DEBIT_CARD">Debit Card</option>
+          <option value="UPI">UPI</option>
+          <option value="NET_BANKING">Net Banking</option>
+          <option value="WALLET">Wallet</option>
+        </select>
+        <div class="invalid-feedback">{{errors.paymentMethod}}</div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Special Requests</label>
+        <textarea [(ngModel)]="specialRequests" class="form-control" rows="2" placeholder="e.g. Extra bed, late check-in..."></textarea>
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-primary w-100 btn-lg" (click)="proceed()" [disabled]="loading">
+    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+    <i *ngIf="!loading" class="bi bi-credit-card me-2"></i>Proceed to Pay
+  </button>
+</div>
