@@ -1,4 +1,4 @@
-# Grand Hotel Management System
+# Hotel Management System
 
 Full-stack Hotel Management System:
 - Frontend: Angular 19 + Bootstrap 5
